@@ -13,6 +13,7 @@ export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, data: Partial<InsertUser>): Promise<User | undefined>;
   
   // Categories
   getCategories(): Promise<Category[]>;
@@ -37,6 +38,7 @@ export interface IStorage {
   
   // Orders
   getOrders(sessionId: string): Promise<Order[]>;
+  getOrdersByUserId(userId: string): Promise<Order[]>;
   getOrder(id: string): Promise<Order | undefined>;
   createOrder(order: InsertOrder): Promise<Order>;
   updateOrderStatus(id: string, status: string): Promise<Order | undefined>;
@@ -469,6 +471,16 @@ export class MemStorage implements IStorage {
     return user;
   }
 
+  async updateUser(id: string, data: Partial<InsertUser>): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (user) {
+      const updated = { ...user, ...data };
+      this.users.set(id, updated);
+      return updated;
+    }
+    return undefined;
+  }
+
   // Category methods
   async getCategories(): Promise<Category[]> {
     return Array.from(this.categories.values());
@@ -579,19 +591,29 @@ export class MemStorage implements IStorage {
       });
   }
 
+  async getOrdersByUserId(userId: string): Promise<Order[]> {
+    return Array.from(this.orders.values())
+      .filter((order) => (order as any).userId === userId)
+      .sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return dateB - dateA;
+      });
+  }
+
   async getOrder(id: string): Promise<Order | undefined> {
     return this.orders.get(id);
   }
 
-  async createOrder(order: InsertOrder): Promise<Order> {
+  async createOrder(order: InsertOrder & { userId?: string }): Promise<Order> {
     const id = randomUUID();
-    const newOrder: Order = { 
+    const newOrder: Order & { userId?: string } = { 
       ...order, 
       id,
       createdAt: new Date()
     };
-    this.orders.set(id, newOrder);
-    return newOrder;
+    this.orders.set(id, newOrder as Order);
+    return newOrder as Order;
   }
 
   async updateOrderStatus(id: string, status: string): Promise<Order | undefined> {

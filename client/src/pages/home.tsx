@@ -1,36 +1,17 @@
 import { Link } from "wouter";
-import { ArrowLeft, Truck, Shield, RefreshCw, Headphones } from "lucide-react";
+import { ArrowLeft, ArrowRight, Truck, Shield, RefreshCw, Headphones } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ProductCard } from "@/components/product-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQuery } from "@tanstack/react-query";
+import { useLanguage } from "@/lib/language-context";
 import type { Product, Category } from "@shared/schema";
 
-const features = [
-  {
-    icon: Truck,
-    title: "شحن مجاني",
-    description: "للطلبات فوق ٢٠٠ ر.س",
-  },
-  {
-    icon: Shield,
-    title: "ضمان الجودة",
-    description: "منتجات أصلية ١٠٠٪",
-  },
-  {
-    icon: RefreshCw,
-    title: "إرجاع سهل",
-    description: "خلال ١٤ يوم",
-  },
-  {
-    icon: Headphones,
-    title: "دعم ٢٤/٧",
-    description: "خدمة عملاء متميزة",
-  },
-];
-
 function HeroSection() {
+  const { t, isRTL } = useLanguage();
+  const Arrow = isRTL ? ArrowLeft : ArrowRight;
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-primary/10 via-background to-primary/5">
       <div className="max-w-7xl mx-auto px-4 py-16 md:py-24 lg:py-32">
@@ -39,25 +20,28 @@ function HeroSection() {
             className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
             data-testid="text-hero-title"
           >
-            تسوق أفضل المنتجات
-            <span className="text-primary block">بأسعار لا تُقاوم</span>
+            {t("تسوق أفضل المنتجات", "Shop the Best Products")}
+            <span className="text-primary block">{t("بأسعار لا تُقاوم", "at Unbeatable Prices")}</span>
           </h1>
           <p
             className="text-lg md:text-xl text-muted-foreground mb-8 leading-relaxed"
             data-testid="text-hero-description"
           >
-            اكتشف مجموعتنا الواسعة من المنتجات عالية الجودة مع خدمة توصيل سريعة إلى جميع أنحاء المملكة
+            {t(
+              "اكتشف مجموعتنا الواسعة من المنتجات عالية الجودة مع خدمة توصيل سريعة إلى جميع أنحاء المملكة",
+              "Discover our wide range of high-quality products with fast delivery service across the Kingdom"
+            )}
           </p>
           <div className="flex flex-wrap gap-4">
             <Link href="/products">
               <Button size="lg" className="h-14 px-8 text-lg" data-testid="button-hero-shop">
-                تسوق الآن
-                <ArrowLeft className="mr-2 h-5 w-5" />
+                {t("تسوق الآن", "Shop Now")}
+                <Arrow className="ms-2 h-5 w-5" />
               </Button>
             </Link>
             <Link href="/products?featured=true">
               <Button size="lg" variant="outline" className="h-14 px-8 text-lg" data-testid="button-hero-featured">
-                المنتجات المميزة
+                {t("المنتجات المميزة", "Featured Products")}
               </Button>
             </Link>
           </div>
@@ -69,6 +53,31 @@ function HeroSection() {
 }
 
 function FeaturesSection() {
+  const { t } = useLanguage();
+
+  const features = [
+    {
+      icon: Truck,
+      title: t("شحن مجاني", "Free Shipping"),
+      description: t("للطلبات فوق ٢٠٠ ر.س", "On orders over 200 SAR"),
+    },
+    {
+      icon: Shield,
+      title: t("ضمان الجودة", "Quality Guarantee"),
+      description: t("منتجات أصلية ١٠٠٪", "100% Original Products"),
+    },
+    {
+      icon: RefreshCw,
+      title: t("إرجاع سهل", "Easy Returns"),
+      description: t("خلال ١٤ يوم", "Within 14 days"),
+    },
+    {
+      icon: Headphones,
+      title: t("دعم ٢٤/٧", "24/7 Support"),
+      description: t("خدمة عملاء متميزة", "Excellent Customer Service"),
+    },
+  ];
+
   return (
     <section className="max-w-7xl mx-auto px-4 py-12">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -87,6 +96,9 @@ function FeaturesSection() {
 }
 
 function CategoriesSection() {
+  const { t, language, isRTL } = useLanguage();
+  const Arrow = isRTL ? ArrowLeft : ArrowRight;
+
   const { data: categories, isLoading } = useQuery<Category[]>({
     queryKey: ["/api/categories"],
   });
@@ -111,12 +123,12 @@ function CategoriesSection() {
     <section className="max-w-7xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
         <h2 className="text-2xl md:text-3xl font-bold" data-testid="text-categories-title">
-          تسوق حسب الفئة
+          {t("تسوق حسب الفئة", "Shop by Category")}
         </h2>
         <Link href="/products">
           <Button variant="outline" data-testid="button-view-all-categories">
-            عرض الكل
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            {t("عرض الكل", "View All")}
+            <Arrow className="ms-2 h-4 w-4" />
           </Button>
         </Link>
       </div>
@@ -131,12 +143,12 @@ function CategoriesSection() {
               <div className="relative aspect-square overflow-hidden rounded-t-lg bg-muted">
                 <img
                   src={category.image || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400"}
-                  alt={category.nameAr}
+                  alt={language === "ar" ? category.nameAr : category.name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <h3 className="absolute bottom-3 right-3 left-3 text-white font-semibold text-lg">
-                  {category.nameAr}
+                  {language === "ar" ? category.nameAr : category.name}
                 </h3>
               </div>
             </Card>
@@ -148,6 +160,9 @@ function CategoriesSection() {
 }
 
 function FeaturedProductsSection() {
+  const { t, isRTL } = useLanguage();
+  const Arrow = isRTL ? ArrowLeft : ArrowRight;
+
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["/api/products"],
   });
@@ -181,12 +196,12 @@ function FeaturedProductsSection() {
     <section className="max-w-7xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
         <h2 className="text-2xl md:text-3xl font-bold" data-testid="text-featured-title">
-          منتجات مميزة
+          {t("منتجات مميزة", "Featured Products")}
         </h2>
         <Link href="/products?featured=true">
           <Button variant="outline" data-testid="button-view-all-featured">
-            عرض الكل
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            {t("عرض الكل", "View All")}
+            <Arrow className="ms-2 h-4 w-4" />
           </Button>
         </Link>
       </div>
@@ -200,6 +215,9 @@ function FeaturedProductsSection() {
 }
 
 function NewArrivalsSection() {
+  const { t, isRTL } = useLanguage();
+  const Arrow = isRTL ? ArrowLeft : ArrowRight;
+
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["/api/products"],
   });
@@ -213,12 +231,12 @@ function NewArrivalsSection() {
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
           <h2 className="text-2xl md:text-3xl font-bold" data-testid="text-new-arrivals-title">
-            وصل حديثاً
+            {t("وصل حديثاً", "New Arrivals")}
           </h2>
           <Link href="/products?new=true">
             <Button variant="outline" data-testid="button-view-all-new">
-              عرض الكل
-              <ArrowLeft className="mr-2 h-4 w-4" />
+              {t("عرض الكل", "View All")}
+              <Arrow className="ms-2 h-4 w-4" />
             </Button>
           </Link>
         </div>
@@ -233,6 +251,9 @@ function NewArrivalsSection() {
 }
 
 function SaleSection() {
+  const { t, isRTL } = useLanguage();
+  const Arrow = isRTL ? ArrowLeft : ArrowRight;
+
   const { data: products, isLoading } = useQuery<Product[]>({
     queryKey: ["/api/products"],
   });
@@ -245,12 +266,12 @@ function SaleSection() {
     <section className="max-w-7xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-8 gap-4 flex-wrap">
         <h2 className="text-2xl md:text-3xl font-bold text-destructive" data-testid="text-sale-title">
-          عروض خاصة
+          {t("عروض خاصة", "Special Offers")}
         </h2>
         <Link href="/products?sale=true">
           <Button variant="destructive" data-testid="button-view-all-sale">
-            عرض الكل
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            {t("عرض الكل", "View All")}
+            <Arrow className="ms-2 h-4 w-4" />
           </Button>
         </Link>
       </div>
@@ -264,19 +285,24 @@ function SaleSection() {
 }
 
 function NewsletterSection() {
+  const { t } = useLanguage();
+
   return (
     <section className="bg-primary text-primary-foreground py-16">
       <div className="max-w-xl mx-auto px-4 text-center">
         <h2 className="text-2xl md:text-3xl font-bold mb-4" data-testid="text-newsletter-title">
-          اشترك في نشرتنا البريدية
+          {t("اشترك في نشرتنا البريدية", "Subscribe to Our Newsletter")}
         </h2>
         <p className="mb-6 opacity-90">
-          احصل على أحدث العروض والخصومات مباشرة في بريدك الإلكتروني
+          {t(
+            "احصل على أحدث العروض والخصومات مباشرة في بريدك الإلكتروني",
+            "Get the latest offers and discounts directly in your email"
+          )}
         </p>
         <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
           <input
             type="email"
-            placeholder="بريدك الإلكتروني"
+            placeholder={t("بريدك الإلكتروني", "Your email")}
             className="flex-1 h-12 px-4 rounded-lg bg-primary-foreground/10 border border-primary-foreground/20 text-primary-foreground placeholder:text-primary-foreground/60 focus:outline-none focus:ring-2 focus:ring-primary-foreground/30"
             data-testid="input-newsletter-email"
           />
@@ -286,7 +312,7 @@ function NewsletterSection() {
             className="h-12 px-6"
             data-testid="button-newsletter-subscribe"
           >
-            اشترك
+            {t("اشترك", "Subscribe")}
           </Button>
         </form>
       </div>
