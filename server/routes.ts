@@ -1,6 +1,7 @@
 import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { registerAdminRoutes } from "./admin-routes";
 import session from "express-session";
 import MemoryStore from "memorystore";
 import bcrypt from "bcryptjs";
@@ -471,6 +472,9 @@ export async function registerRoutes(
       res.status(500).json({ error: "Failed to update order status" });
     }
   });
+
+  // Register admin routes
+  registerAdminRoutes(app);
 
   return httpServer;
 }

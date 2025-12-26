@@ -17,6 +17,10 @@ import Checkout from "@/pages/checkout";
 import Orders from "@/pages/orders";
 import Login from "@/pages/login";
 import Dashboard from "@/pages/dashboard";
+import AdminDashboard from "@/pages/admin";
+import AdminProducts from "@/pages/admin-products";
+import AdminProductForm from "@/pages/admin-product-form";
+import AdminOrders from "@/pages/admin-orders";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -30,6 +34,11 @@ function Router() {
       <Route path="/orders" component={Orders} />
       <Route path="/login" component={Login} />
       <Route path="/dashboard" component={Dashboard} />
+      <Route path="/admin" component={AdminDashboard} />
+      <Route path="/admin/products" component={AdminProducts} />
+      <Route path="/admin/products/new" component={AdminProductForm} />
+      <Route path="/admin/products/:id" component={AdminProductForm} />
+      <Route path="/admin/orders" component={AdminOrders} />
       <Route component={NotFound} />
     </Switch>
   );
